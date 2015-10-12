@@ -50,3 +50,20 @@ if err != nil {
 ```
 * waitAndStop == true: wait until all jobs was processed
 * waitAndStop == false: close workers immediate 
+
+### Job example
+```
+// Job structure
+type Job struct {
+    name string
+}
+
+// Work is method which is called by the worker
+func (j *Job) Work() error {
+    fmt.Println("Work: " + j.name)
+
+    time.Sleep(1 * time.Second)
+
+    return nil
+}
+```
