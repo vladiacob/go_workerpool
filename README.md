@@ -15,3 +15,38 @@ cd examples
 go run example.go
 ``
 
+## How to use
+### Include go_workerpool
+``
+include (
+    ..
+    pool "github.com/vladiacob/go_workerpool"
+    ..
+)
+``
+
+### Initialize pool
+``
+workerPool := pool.New(2, 10)
+workerPool.Run()
+``
+* First parameter: maxWorkers
+* Second parameter: maxJobQueue
+
+### Add job to pool
+``
+err := workerPool.Add(job1)
+if err != nil {
+    fmt.Println(err)
+}
+``
+
+### Stop worker pool
+``
+err := workerPool.Stop(true)
+if err != nil {
+    fmt.Println(err)
+}
+``
+* waitAndStop == true: wait until all jobs was processed
+* waitAndStop == false: close workers immediate 

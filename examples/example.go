@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	pool "github.com/sendgrid/partner_event_reflector/helper/workerpool"
+	pool "github.com/vladiacob/go_workerpool"
 )
 
 // Job structure
