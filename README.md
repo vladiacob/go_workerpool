@@ -1,6 +1,9 @@
 # go_workerpool
 Generic worker pool for Go Language. You can limit the number of go routines which are running in parallel.
 
+## Travis CI
+![Travis CI](https://travis-ci.org/vladiacob/go_workerpool.svg)
+
 ## Godoc
 [https://godoc.org/github.com/vladiacob/go_workerpool](https://godoc.org/github.com/vladiacob/go_workerpool)
 
