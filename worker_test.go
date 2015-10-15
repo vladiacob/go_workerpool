@@ -20,7 +20,6 @@ func TestNewWorker(t *testing.T) {
 		quitChan:   make(chan bool),
 		started:    false,
 	}
-	worker.Stop()
 
 	assert.Equal(t, expectedWorker.id, worker.id)
 	assert.Equal(t, expectedWorker.workerPool, worker.workerPool)

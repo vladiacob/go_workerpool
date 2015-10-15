@@ -106,36 +106,10 @@ func (p *Pool) waitAndStop() error {
 	queueTicker := time.NewTicker(time.Millisecond * retryInterval)
 	// Retry evenry 500ms to check if job queue is empty
 	for _ = range queueTicker.C {
-		jobQueueSize := len(p.jobQueue)
-
-		// Check if jobQueue is empty
-		if jobQueueSize == 0 {
-			// For each worker check if job is done
-			// Stop worker when job is done
+		// Check if jobQueue is empty and all workers are available
+		if len(p.jobQueue) == 0 && len(p.workerPool) == p.maxWorkers {
 			for _, worker := range p.workers {
-				if worker.Started() && len(p.jobQueue) == 0 {
-					workerTicker := time.NewTicker(time.Millisecond * retryInterval)
-					// Retry every 500ms to check if worker job is done
-					for _ = range workerTicker.C {
-						if !worker.Started() {
-							worker.Stop()
-
-							break
-						}
-
-						retries++
-						if retries >= retriesLimit {
-							workerTicker.Stop()
-
-							return fmt.Errorf(fmt.Sprintf("checking worker status exceeded retry limit: %v", time.Duration(retries)*retryInterval*time.Millisecond))
-						}
-					}
-
-					// Stop worker ticker
-					workerTicker.Stop()
-				} else {
-					worker.Stop()
-				}
+				worker.Stop()
 			}
 
 			break

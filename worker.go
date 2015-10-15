@@ -35,21 +35,18 @@ func NewWorker(id int, workerPool chan chan Job, debug bool) *Worker {
 
 // Start worker
 func (w *Worker) Start() {
+	w.started = true
+
 	go func() {
 		for {
 			// register the current worker into the worker queue.
 			w.workerPool <- w.jobQueue
-			w.started = false
 
 			select {
 			case job := <-w.jobQueue:
-				w.started = true
-
 				if err := job.Work(); err != nil {
 					w.verbose(w.debug, "error running worker %d: %s\n", w.id, err.Error())
 				}
-
-				w.started = false
 
 			case <-w.quitChan:
 				w.verbose(w.debug, "worker %d stopping\n", w.id)
