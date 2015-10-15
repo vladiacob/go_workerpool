@@ -46,7 +46,7 @@ func New(maxWorkers int, maxJobQueue int) *Pool {
 func (p *Pool) Run() {
 	// starting n number of workers
 	for i := 0; i < p.maxWorkers; i++ {
-		worker := NewWorker(i+1, p.workerPool)
+		worker := NewWorker(i+1, p.workerPool, true)
 		worker.Start()
 		p.workers = append(p.workers, worker)
 	}

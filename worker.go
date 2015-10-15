@@ -16,16 +16,20 @@ type Worker struct {
 	workerPool chan chan Job
 	quitChan   chan bool
 	started    bool
+	debug      bool
+	verbose    func(debug bool, msg string, args ...interface{})
 }
 
 // NewWorker return a new instance of worker
-func NewWorker(id int, workerPool chan chan Job) *Worker {
+func NewWorker(id int, workerPool chan chan Job, debug bool) *Worker {
 	return &Worker{
 		id:         id,
 		jobQueue:   make(chan Job),
 		workerPool: workerPool,
 		quitChan:   make(chan bool),
 		started:    false,
+		debug:      debug,
+		verbose:    verbose,
 	}
 }
 
@@ -42,13 +46,13 @@ func (w *Worker) Start() {
 				w.started = true
 
 				if err := job.Work(); err != nil {
-					log.Printf("error running worker %d: %s\n", w.id, err.Error())
+					w.verbose(w.debug, "error running worker %d: %s\n", w.id, err.Error())
 				}
 
 				w.started = false
 
 			case <-w.quitChan:
-				log.Printf("worker %d stopping\n", w.id)
+				w.verbose(w.debug, "worker %d stopping\n", w.id)
 
 				w.started = false
 
@@ -73,4 +77,10 @@ func (w *Worker) ID() int {
 // Started return worker status
 func (w *Worker) Started() bool {
 	return w.started
+}
+
+func verbose(debug bool, msg string, args ...interface{}) {
+	if debug {
+		log.Printf(msg, args...)
+	}
 }
