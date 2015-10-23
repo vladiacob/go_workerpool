@@ -2,6 +2,7 @@ package go_workerpool
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -102,6 +103,31 @@ func TestStatus(t *testing.T) {
 	assert.Equal(t, pool.Status(), "unknown")
 }
 
+func TestStats(t *testing.T) {
+	maxWorkers := 5
+	maxJobQueue := 10
+	pool := New(maxWorkers, maxJobQueue)
+	pool.Run()
+
+	// Create job and add to worker pool
+	noJobs := 4
+
+	for i := 0; i < noJobs; i++ {
+		job := &JobWaitTest{noCalls: 0, response: nil, name: i}
+		pool.Add(job)
+	}
+
+	stats := pool.Stats()
+	assert.Equal(t, 6, stats["free_job_queue_spaces"])
+
+	time.Sleep(1 * time.Second)
+
+	stats = pool.Stats()
+	assert.Equal(t, 1, stats["free_workers"])
+
+	pool.Stop(true)
+}
+
 func TestWaitAndStop(t *testing.T) {
 	maxWorkers := 2
 	maxJobQueue := 10
@@ -141,15 +167,25 @@ func TestImmediateStop(t *testing.T) {
 
 // JobTest structure which simulate a job
 type JobWaitTest struct {
-	noCalls int
+	noCalls  int
+	workerID int
+	name     int
 
 	response error
 }
 
 func (j *JobWaitTest) Work() error {
-	time.Sleep(1 * time.Second)
-
+	time.Sleep(5 * time.Second)
+	fmt.Println(fmt.Sprintf("test %d", j.workerID))
 	j.noCalls++
 
 	return j.response
+}
+
+func (j *JobWaitTest) SetWorkerID(ID int) {
+	j.workerID = ID
+}
+
+func (j *JobWaitTest) Name() int {
+	return j.name
 }

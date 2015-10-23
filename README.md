@@ -51,8 +51,8 @@ if err != nil {
     fmt.Println(err)
 }
 ```
-* waitAndStop == true: wait until all jobs was processed
-* waitAndStop == false: close workers immediate 
+* true: wait until all jobs was processed
+* false: close workers immediate 
 
 ### Job example
 ```
@@ -68,5 +68,9 @@ func (j *Job) Work() error {
     time.Sleep(1 * time.Second)
 
     return nil
+}
+
+func (j *Job) SetWorkerID(ID int) {
+    j.workerID = ID
 }
 ```

@@ -9,7 +9,8 @@ import (
 
 // Job structure
 type Job struct {
-	name string
+	name     string
+	workerID int
 }
 
 // Work is method which is called by the worker
@@ -19,6 +20,10 @@ func (j *Job) Work() error {
 	time.Sleep(1 * time.Second)
 
 	return nil
+}
+
+func (j *Job) SetWorkerID(ID int) {
+	j.workerID = ID
 }
 
 func main() {
