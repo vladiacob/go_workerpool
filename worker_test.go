@@ -155,7 +155,8 @@ func TestID(t *testing.T) {
 
 // JobTest structure which simulate a job
 type JobTest struct {
-	noCalls int
+	noCalls  int
+	workerID int
 
 	response error
 }
@@ -164,4 +165,8 @@ func (j *JobTest) Work() error {
 	j.noCalls++
 
 	return j.response
+}
+
+func (j *JobTest) SetWorkerID(ID int) {
+	j.workerID = ID
 }

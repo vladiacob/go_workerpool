@@ -97,6 +97,16 @@ func (p *Pool) Status() string {
 	return "unknown"
 }
 
+// Stats return how many workers and job queue spaces are free
+func (p *Pool) Stats() map[string]int {
+	freeJobQueueSpaces := p.maxJobQueue - len(p.jobQueue)
+
+	return map[string]int{
+		"free_workers":          len(p.workerPool),
+		"free_job_queue_spaces": freeJobQueueSpaces,
+	}
+}
+
 func (p *Pool) waitAndStop() error {
 	retryInterval := time.Duration(500)
 

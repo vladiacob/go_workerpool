@@ -7,6 +7,7 @@ import (
 // Job interface which will be used to create a new job
 type Job interface {
 	Work() error
+	SetWorkerID(ID int)
 }
 
 // Worker is the structure for worker
@@ -44,6 +45,7 @@ func (w *Worker) Start() {
 
 			select {
 			case job := <-w.jobQueue:
+				job.SetWorkerID(w.ID())
 				if err := job.Work(); err != nil {
 					w.verbose(w.debug, "error running worker %d: %s\n", w.id, err.Error())
 				}
@@ -61,9 +63,7 @@ func (w *Worker) Start() {
 
 // Stop worker
 func (w *Worker) Stop() {
-	go func() {
-		w.quitChan <- true
-	}()
+	w.quitChan <- true
 }
 
 // ID return worker id
