@@ -71,18 +71,26 @@ func TestAddErrors(t *testing.T) {
 
 	assert.Equal(t, expectedErr, err)
 
+	// Worker pool is full
+	maxWorkers = 1
+	maxJobQueue = 1
+	pool = New(maxWorkers, maxJobQueue)
 	pool.Run()
 
-	// Worker pool is full
-	err1 := pool.Add(job)
-	err2 := pool.Add(job)
-	err3 := pool.Add(job)
+	jobWait := &JobWaitTest{noCalls: 0, response: nil}
+	err1 := pool.Add(jobWait)
+	time.Sleep(10 * time.Microsecond)
+	err2 := pool.Add(jobWait)
+	time.Sleep(10 * time.Microsecond)
+	err3 := pool.Add(jobWait)
+	time.Sleep(10 * time.Microsecond)
+	err4 := pool.Add(jobWait)
 
-	expectedErr = errors.New("job queue is full, it have 2 jobs")
-
+	expectedErr = errors.New("job queue is full, it have 1 jobs")
 	assert.Equal(t, nil, err1)
 	assert.Equal(t, nil, err2)
-	assert.Equal(t, expectedErr, err3)
+	assert.Equal(t, nil, err3)
+	assert.Equal(t, expectedErr, err4)
 }
 
 func TestStatus(t *testing.T) {
